@@ -22,7 +22,7 @@ for screenshot in list_screenshots:
     time_date_now=datetime.datetime.now()
     time_date_when_screen_was_moved=datetime.datetime.fromtimestamp(screenshot.stat().st_ctime)
     time_diff=time_date_now-time_date_when_screen_was_moved
-    if time_diff.days>=7:
+    if time_diff.days>7:
         with open(screenshot,"wb") as bin_file:
             bin_file.write(b'')
         screenshot.unlink()
