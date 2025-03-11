@@ -4,9 +4,9 @@
 
 ### 1. Check if the specific source file already exists in the destination directory
 
-- <font color="red">False</font>: No, does not exist: Simply copy source to destination.
+- <span style="color: red;">False</span>: No, does not exist: Simply copy source to destination.
 
-* <font color="green">True</font>: Yes, compare files and proceed based on criteria
+* <span style="color: green;">True</span>: Yes, compare files and proceed based on criteria
 
 ### 2. When comparing files:
 
