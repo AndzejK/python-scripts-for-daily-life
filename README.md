@@ -1,4 +1,4 @@
-# Behid the Scripts
+# Behind the Scripts
 
 ## File Transfer with Progress Display
 
