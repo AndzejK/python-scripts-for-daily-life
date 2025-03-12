@@ -55,7 +55,7 @@ demo_dirs=["demo_dir_"+str(demo_dir) for demo_dir in range(0,6)]
 # Create a directory
 # os.makedirs(os.path.join(source_path,demo_dirs[0]), exist_ok=True)
 
-# # create a file with random context
+# # create a file with random context e.g. pwuks90sql07_nrailpw11-pw-db-02_FULL_20250301_053546_32.bak
 # import random,string
 # demo_file=demo_files[0]
 # with open(os.path.join(source_path,demo_file),'w') as r_file:
