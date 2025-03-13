@@ -1,4 +1,5 @@
 import os,shutil,glob
+import datetime
 from paths import source_path,destination_path
 
 ##### Basic examples how to deal with files and directories #####
@@ -46,8 +47,15 @@ dirs_only=[dir for dir in os.listdir(source_path) if os.path.isdir(os.path.join(
 
 
 ### I  created files with a specific sequence and then rename only the files that have that certain sequence.
-### e.g. demo_file_00 ... demo_file_10
-###      demo_dir_00  ... demo_dir_10
+
+# #pwuks90sql07_nrailpw11-pw-db-02_FULL_DATE_TIME_NUMRANGE.
+basename="nrailpw11-pw-db-02_FULL_"
+cur_date=datetime.date.today()
+cur_time=datetime.datetime.now().time()
+cur_date_formatted=cur_date.strftime("%Y%m%d")
+cur_time_formatted=cur_time.strftime("%H%M%S")
+file_name=basename+cur_date_formatted+'_'+cur_time_formatted+'_'
+
 
 demo_files=["demo_file_"+str(demo_file)+".txt" for demo_file in range(0,11)]
 demo_dirs=["demo_dir_"+str(demo_dir) for demo_dir in range(0,6)]
@@ -56,6 +64,8 @@ demo_dirs=["demo_dir_"+str(demo_dir) for demo_dir in range(0,6)]
 # os.makedirs(os.path.join(source_path,demo_dirs[0]), exist_ok=True)
 
 # # create a file with random context e.g. pwuks90sql07_nrailpw11-pw-db-02_FULL_20250301_053546_32.bak
+
+# 
 # import random,string
 # demo_file=demo_files[0]
 # with open(os.path.join(source_path,demo_file),'w') as r_file:
