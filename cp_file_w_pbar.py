@@ -1,5 +1,5 @@
 import os,shutil,glob
-import datetime
+import datetime, random,string
 from paths import source_path,destination_path
 
 ##### Basic examples how to deal with files and directories #####
@@ -13,9 +13,7 @@ full_paths=[os.path.join(source_path,item) for item in os.listdir(source_path)]
 # Filter for just file or just directories
 ## Obtaining files
 files_only=[file for file in os.listdir(source_path) if os.path.isfile(os.path.join(source_path,file))]
-# for file in os.listdir(source_path):
-#     if os.path.isfile(os.path.join(source_path,file)):
-#         files_only.append(file)
+
 ## Obtaining dirs
 dirs_only=[dir for dir in os.listdir(source_path) if os.path.isdir(os.path.join(source_path,dir))]
 
@@ -49,26 +47,41 @@ dirs_only=[dir for dir in os.listdir(source_path) if os.path.isdir(os.path.join(
 ### I  created files with a specific sequence and then rename only the files that have that certain sequence.
 
 # #pwuks90sql07_nrailpw11-pw-db-02_FULL_DATE_TIME_NUMRANGE.
-basename="nrailpw11-pw-db-02_FULL_"
+basename_for_file="nrailpw11-pw-db-02_FULL_"
+basename_for_dir="_demo_dir_"
 cur_date=datetime.date.today()
 cur_time=datetime.datetime.now().time()
 cur_date_formatted=cur_date.strftime("%Y%m%d")
 cur_time_formatted=cur_time.strftime("%H%M%S")
-file_name=basename+cur_date_formatted+'_'+cur_time_formatted+'_'
+file_name=basename_for_file+cur_date_formatted+'_'+cur_time_formatted+'_'
+dir_name=basename_for_dir+cur_date_formatted
 
+# Generate file names, nrailpw11-pw-db-02_FULL_XXXXXX_XXXXXX_XX
+demo_files=[file_name+f'{str(demo_file).zfill(2)}' for demo_file in range(1,11)]
+# Generate directory names
+demo_directories=[str(d_name).zfill(2)+dir_name for d_name in range(1,6)]
 
-demo_files=["demo_file_"+str(demo_file)+".txt" for demo_file in range(0,11)]
-demo_dirs=["demo_dir_"+str(demo_dir) for demo_dir in range(0,6)]
-# print(demo_files)
-# Create a directory
-# os.makedirs(os.path.join(source_path,demo_dirs[0]), exist_ok=True)
+# Create directories
+# for demo_dir in demo_directories:
+#     os.makedirs(os.path.join(source_path,demo_dir), exist_ok=True)
 
-# # create a file with random context e.g. pwuks90sql07_nrailpw11-pw-db-02_FULL_20250301_053546_32.bak
+# Delete directories
+# for demo_dir in demo_directories:
+#     os.removedirs(os.path.join(source_path,demo_dir))
 
-# 
-# import random,string
-# demo_file=demo_files[0]
-# with open(os.path.join(source_path,demo_file),'w') as r_file:
-#     random_content=''.join(random.choices(string.ascii_letters + string.digits + ' \n',k=8 * 1024))
-#     r_file.write(random_content)
+# Create files with random content
+# for d_file in demo_files:
+#     with open(os.path.join(source_path,demo_directories[0],d_file),'w') as file:
+#         random_content=''.join(random.choices(string.ascii_letters + string.digits + ' \n',k=8 * 1024))
+#         file.write(random_content)
+
+# Remove files with random content
+# Identify specific naames first!
+
+files_only=[file for file in os.listdir(source_path) if os.path.isfile(os.path.join(source_path,file))]
+
+print(os.listdir(os.path.join(source_path,demo_directories[0])))
+
+# for d_file in demo_files:
+    # os.remove(os.path.join(source_path,demo_directories[0],d_file))
 
