@@ -1,7 +1,27 @@
-import os,shutil,glob
+import os,shutil,re
 import datetime, random,string
 from paths import source_path,destination_path
 
+### Functions:
+## function that generates file names
+def generate_file_names(num_of_files=11,ext='txt',basename='nrailpw11-pw-db-02_FULL_'):
+    import datetime
+    cur_date=datetime.date.today()
+    cur_time=datetime.datetime.now().time()
+    cur_date_formatted=cur_date.strftime("%Y%m%d")
+    cur_time_formatted=cur_time.strftime("%H%M%S")
+    file_name=basename+cur_date_formatted+'_'+cur_time_formatted+'_'
+    demo_files=[file_name+f'{str(demo_file).zfill(2)}.{ext}' for demo_file in range(1,num_of_files)]
+
+    return demo_files
+
+## function that generates random content
+def generate_random_context(src_path: str, dirs: list[str], files: list[str]) -> None:
+    for dir_filtered in dirs:
+        for d_file in files:
+            with open(os.path.join(src_path,dir_filtered,d_file),'w') as f_demo:
+                random_content=''.join(random.choices(string.ascii_letters + string.digits + ' \n',k=8 * 1024))
+                f_demo.write(random_content)
 ##### Basic examples how to deal with files and directories #####
 
 # A list of files and directories
@@ -17,9 +37,12 @@ files_only=[file for file in os.listdir(source_path) if os.path.isfile(os.path.j
 ## Obtaining dirs
 dirs_only=[dir for dir in os.listdir(source_path) if os.path.isdir(os.path.join(source_path,dir))]
 
+dir_search_pattern=r"^(?!01)\d{2}_demo_dir_20250314" # A negative lookahead, skips what start with 01
+dirs_only_filtered=[dir_fil for dir_fil in dirs_only if re.match(dir_search_pattern,dir_fil)]
+
 # ## Search in the files system from where I tell for all files and directories
 # for cur_dir_path, dirs, files in os.walk(source_path):
-#     print(f"Current Directory: {cur_dir_path}")
+#     print(f"Current Directory: {cur_dir_path}"
 #     print(f"Subdirectories: {dirs}")
 #     print(f"Files: {files}")
 #     print()  # Print a newline for better readability
@@ -44,21 +67,14 @@ dirs_only=[dir for dir in os.listdir(source_path) if os.path.isdir(os.path.join(
 # os.rmdir(os.path.join(source_path,"dir_name_"))
 
 
-### I  created files with a specific sequence and then rename only the files that have that certain sequence.
+# Generate file names, nrailpw11-pw-db-02_FULL_XXXXXX_XXXXXX_XX
+# demo_files=[file_name+f'{str(demo_file).zfill(2)}' for demo_file in range(1,11)]
 
-# #pwuks90sql07_nrailpw11-pw-db-02_FULL_DATE_TIME_NUMRANGE.
-basename_for_file="nrailpw11-pw-db-02_FULL_"
+# Create name for a directory
 basename_for_dir="_demo_dir_"
 cur_date=datetime.date.today()
-cur_time=datetime.datetime.now().time()
 cur_date_formatted=cur_date.strftime("%Y%m%d")
-cur_time_formatted=cur_time.strftime("%H%M%S")
-file_name=basename_for_file+cur_date_formatted+'_'+cur_time_formatted+'_'
 dir_name=basename_for_dir+cur_date_formatted
-
-# Generate file names, nrailpw11-pw-db-02_FULL_XXXXXX_XXXXXX_XX
-demo_files=[file_name+f'{str(demo_file).zfill(2)}' for demo_file in range(1,11)]
-# Generate directory names
 demo_directories=[str(d_name).zfill(2)+dir_name for d_name in range(1,6)]
 
 # Create directories
@@ -69,8 +85,13 @@ demo_directories=[str(d_name).zfill(2)+dir_name for d_name in range(1,6)]
 # for demo_dir in demo_directories:
 #     os.removedirs(os.path.join(source_path,demo_dir))
 
-# Create files with random content
-# for d_file in demo_files:
+demo_file_names=generate_file_names()
+
+# dir_test_fn=["dirTobeCopied"]
+# generate_random_context(src_path=source_path,dirs=dir_test_fn,files=demo_file_names)
+
+# Create files with random content 
+# for d_file in demo_file_names:
 #     with open(os.path.join(source_path,demo_directories[0],d_file),'w') as file:
 #         random_content=''.join(random.choices(string.ascii_letters + string.digits + ' \n',k=8 * 1024))
 #         file.write(random_content)
@@ -80,7 +101,8 @@ demo_directories=[str(d_name).zfill(2)+dir_name for d_name in range(1,6)]
 
 files_only=[file for file in os.listdir(source_path) if os.path.isfile(os.path.join(source_path,file))]
 
-print(os.listdir(os.path.join(source_path,demo_directories[0])))
+
+# print(os.listdir(os.path.join(source_path,demo_directories[0])))
 
 # for d_file in demo_files:
     # os.remove(os.path.join(source_path,demo_directories[0],d_file))
