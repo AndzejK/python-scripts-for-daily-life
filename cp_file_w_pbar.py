@@ -1,5 +1,6 @@
-import os,shutil,re
+import os,shutil,re,time
 import datetime, random,string
+from tqdm import tqdm
 from paths import source_path,destination_path
 
 ### Functions:
@@ -106,4 +107,92 @@ files_only=[file for file in os.listdir(source_path) if os.path.isfile(os.path.j
 
 # for d_file in demo_files:
     # os.remove(os.path.join(source_path,demo_directories[0],d_file))
+
+# Settings for tqdm
+RED = '\033[91m'  # ANSI escape code for bright red
+BRIGHT_GREEN = '\033[92m'
+GREEN = '\033[92m'
+BRIGHT_BLUE = '\033[94m'
+MAGENTA = '\033[35m'
+YELLOW = ' \033[33m'
+BLUE = '\033[94m'
+RESET = '\033[0m' # ANSI escape code to reset color
+
+# for i in range(100):
+#     with tqdm( desc=f"📃 File", bar_format=f"{MAGENTA} {'{l_bar}'}{BRIGHT_GREEN}{'{bar}'}{BRIGHT_BLUE}{'{r_bar}'}{RESET}") as pbar:
+#         total_size=100
+#         bytes_copied=0
+#         while total_size>bytes_copied:
+#             time.sleep(0.001)
+#             bytes_copied+=1
+#             #update() ?
+#             #change color
+#             pbar.update(1)
+#             progress=bytes_copied/total_size
+#             if progress<0.3:
+#                pbar.colour="red" # I recreate each time a new tqdm instance rather than updating the existing one?
+#             elif progress<0.7:
+#                 pbar.colour="yellow"#f"{YELLOW}{'{bar}'}"
+#             else:
+#                pbar.colour="green" #f"{BRIGHT_GREEN}{'{bar}'}"
+
+#### DeepSeek 
+
+total_size = 100
+
+# Initialize ONE progress bar with dynamic color
+with tqdm(
+    total=total_size,
+    desc="📃 File",
+    bar_format=f"{MAGENTA}{{l_bar}}{RESET}{{bar}}{BLUE}{{r_bar}}{RESET}",  # Base format
+    unit_scale=True
+) as pbar:
+    bytes_copied = 0
+    while bytes_copied < total_size:
+        time.sleep(0.1)
+        bytes_copied += 1
+        progress = bytes_copied / total_size
+
+        # Dynamically update bar color based on progress
+        if progress < 0.3:
+            color = RED
+        elif progress < 0.7:
+            color = YELLOW
+        else:
+            color = GREEN
+
+        # Override the bar's color using ANSI codes
+        pbar.n = bytes_copied  # Directly set the current progress
+        pbar.last_print_n = bytes_copied  # Force refresh
+        pbar.bar_format = f"{MAGENTA}{{l_bar}}{RESET}{color}{{bar:20}}{RESET}{BLUE}{{r_bar}}{RESET}"
+        pbar.refresh()  # Manually refresh the bar
+
+        pbar.update(0)  # Force update (no increment)
+
+
+# def get_colour(x):
+#     if x < 30:
+#         return 'red'
+#     elif x < 70:
+#         return 'yellow'
+#     else:
+#         return 'green'
+
+# with tqdm(total=100, bar_format='{l_bar}{bar:20}{r_bar}', colour=get_colour) as pbar:
+#     for i in range(100):
+#         time.sleep(0.1)
+#         pbar.update(1)
+
+# for i in tqdm(range(100), bar_format='{l_bar}{bar:20}{r_bar}', colour='green'):
+#     time.sleep(0.1)
+
+# pbar = tqdm(total=100)
+# for i in range(100):
+#     time.sleep(0.1)
+#     if i < 30:
+#         pbar.bar_format = '{l_bar}{bar:20}{r_bar}'
+#     else:
+#         pbar.bar_format = '{l_bar}{bar:20}{r_bar}'
+#     pbar.update(1)
+# pbar.close()
 
