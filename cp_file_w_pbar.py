@@ -16,6 +16,7 @@ def generate_file_names(num_of_files=11,ext='txt',basename='nrailpw11-pw-db-02_F
 
     return demo_files
 
+
 ## function that generates random content
 def generate_random_context(src_path: str, dirs: list[str], files: list[str]) -> None:
     for dir_filtered in dirs:
@@ -23,6 +24,39 @@ def generate_random_context(src_path: str, dirs: list[str], files: list[str]) ->
             with open(os.path.join(src_path,dir_filtered,d_file),'w') as f_demo:
                 random_content=''.join(random.choices(string.ascii_letters + string.digits + ' \n',k=8 * 1024))
                 f_demo.write(random_content)
+
+# file_names=generate_file_names()
+# generate_random_context(src_path=source_path,dirs=dirs_only_filtered,files=file_names_18)
+
+## wipe out a directory and what is in it
+test_dir=r"/Users/rock/Documents/myStudy/Python/Bentley/python-scripts/tests/files/moveSRC/05_demo_dir_20250314"
+
+
+def remove_dir_and_its_content(src):
+    # get total size of files
+    total_size=0
+    for root,dirs,files in os.walk(test_dir,topdown=False):
+        for file in files:
+            total_size+=os.path.getsize(os.path.join(root,file))
+    
+    # Progress bar setup
+    with tqdm(desc=f"📂 Wiping out... {os.path.basename(src)}",unit="B",unit_scale=True,colour='red',total=total_size) as pbar:
+        # Remove files and update progress
+        for root,dirs,files in os.walk(src,topdown=False):
+            for file in files:
+                file_path=os.path.join(root,file)
+                file_size=os.path.getsize(file_path)
+                os.remove(file_path)
+                pbar.update(file_size) # update a progress bar by a file size
+            # Remove dir if empty:
+            for dir in dirs:
+                os.rmdir(os.path.join(root,dir))
+        # Final cleanup
+        if os.path.exists(src):
+            # print(f"A directory '{dir}' was removed...")
+            os.rmdir(src)
+            
+
 ##### Basic examples how to deal with files and directories #####
 
 # A list of files and directories
@@ -38,8 +72,10 @@ files_only=[file for file in os.listdir(source_path) if os.path.isfile(os.path.j
 ## Obtaining dirs
 dirs_only=[dir for dir in os.listdir(source_path) if os.path.isdir(os.path.join(source_path,dir))]
 
-dir_search_pattern=r"^(?!01)\d{2}_demo_dir_20250314" # A negative lookahead, skips what start with 01
-dirs_only_filtered=[dir_fil for dir_fil in dirs_only if re.match(dir_search_pattern,dir_fil)]
+
+dir_search_pattern=r"^(?!01)\d{2}_demo_dir_2025" # A negative lookahead, skips what start with 01
+dir_search_pattern_all=r"\d{2}_demo_dir_2025"
+dirs_only_filtered=[dir_fil for dir_fil in dirs_only if re.match(dir_search_pattern_all,dir_fil)]
 
 # ## Search in the files system from where I tell for all files and directories
 # for cur_dir_path, dirs, files in os.walk(source_path):
@@ -102,21 +138,52 @@ demo_file_names=generate_file_names()
 
 files_only=[file for file in os.listdir(source_path) if os.path.isfile(os.path.join(source_path,file))]
 
+#### Claude
+real_file='LM-Studio-0.3.9-5-arm64.dmg'
+src = os.path.join(source_path,real_file) 
+dst = os.path.join(destination_path,real_file)
 
+def dynamic_progress_bar(src, dst):
+    """Progress bar with changing colors based on progress"""
+    file_size = os.path.getsize(src)
+    
+    with open(src, 'rb') as fsrc, open(dst, 'wb') as fdst:
+        # Initialising  progress bar
+        with tqdm(total=file_size, 
+                  unit='B',
+                  unit_scale=True,
+                  desc=f"🚀 Transferring {os.path.basename(src)}") as pbar:
+            
+            bytes_copied = 0
+            while True:
+                buf = fsrc.read(1024*1024)
+                if not buf:
+                    break
+                
+                # Simulate network fluctuation for demonstration
+                time.sleep(0.01)  
+                
+                fdst.write(buf)
+                bytes_copied += len(buf)
+                
+                # Update progress
+                pbar.update(len(buf))
+                
+                # Change color based on progress
+                progress = bytes_copied / file_size
+                if progress < 0.3:
+                    pbar.colour = 'red'
+                elif progress < 0.7:
+                    pbar.colour = 'yellow'
+                else:
+                    pbar.colour = 'green'
+
+# dynamic_progress_bar(src,dst)
 # print(os.listdir(os.path.join(source_path,demo_directories[0])))
 
 # for d_file in demo_files:
     # os.remove(os.path.join(source_path,demo_directories[0],d_file))
 
-# Settings for tqdm
-RED = '\033[91m'  # ANSI escape code for bright red
-BRIGHT_GREEN = '\033[92m'
-GREEN = '\033[92m'
-BRIGHT_BLUE = '\033[94m'
-MAGENTA = '\033[35m'
-YELLOW = ' \033[33m'
-BLUE = '\033[94m'
-RESET = '\033[0m' # ANSI escape code to reset color
 
 # for i in range(100):
 #     with tqdm( desc=f"📃 File", bar_format=f"{MAGENTA} {'{l_bar}'}{BRIGHT_GREEN}{'{bar}'}{BRIGHT_BLUE}{'{r_bar}'}{RESET}") as pbar:
@@ -136,38 +203,49 @@ RESET = '\033[0m' # ANSI escape code to reset color
 #             else:
 #                pbar.colour="green" #f"{BRIGHT_GREEN}{'{bar}'}"
 
-#### DeepSeek 
+# #### DeepSeek ####
 
-total_size = 100
+# # Settings for tqdm
+# RED = '\033[91m'  # ANSI escape code for bright red
+# BRIGHT_GREEN = '\033[92m'
+# GREEN = '\033[92m'
+# BRIGHT_BLUE = '\033[94m'
+# MAGENTA = '\033[35m'
+# YELLOW = ' \033[33m'
+# BLUE = '\033[94m'
+# RESET = '\033[0m' # ANSI escape code to reset color
 
-# Initialize ONE progress bar with dynamic color
-with tqdm(
-    total=total_size,
-    desc="📃 File",
-    bar_format=f"{MAGENTA}{{l_bar}}{RESET}{{bar}}{BLUE}{{r_bar}}{RESET}",  # Base format
-    unit_scale=True
-) as pbar:
-    bytes_copied = 0
-    while bytes_copied < total_size:
-        time.sleep(0.1)
-        bytes_copied += 1
-        progress = bytes_copied / total_size
 
-        # Dynamically update bar color based on progress
-        if progress < 0.3:
-            color = RED
-        elif progress < 0.7:
-            color = YELLOW
-        else:
-            color = GREEN
+# total_size = 100
 
-        # Override the bar's color using ANSI codes
-        pbar.n = bytes_copied  # Directly set the current progress
-        pbar.last_print_n = bytes_copied  # Force refresh
-        pbar.bar_format = f"{MAGENTA}{{l_bar}}{RESET}{color}{{bar:20}}{RESET}{BLUE}{{r_bar}}{RESET}"
-        pbar.refresh()  # Manually refresh the bar
+# # Initialize ONE progress bar with dynamic color
+# with tqdm(
+#     total=total_size,
+#     desc="📃 File",
+#     bar_format=f"{MAGENTA}{{l_bar}}{RESET}{{bar}}{BLUE}{{r_bar}}{RESET}",  # Base format
+#     unit_scale=True
+# ) as pbar:
+#     bytes_copied = 0
+#     while bytes_copied < total_size:
+#         time.sleep(0.1)
+#         bytes_copied += 1
+#         progress = bytes_copied / total_size
 
-        pbar.update(0)  # Force update (no increment)
+#         # Dynamically update bar color based on progress
+#         if progress < 0.3:
+#             color = RED
+#         elif progress < 0.7:
+#             color = YELLOW
+#         else:
+#             color = GREEN
+
+#         # Override the bar's color using ANSI codes
+#         pbar.n = bytes_copied  # Directly set the current progress
+#         pbar.last_print_n = bytes_copied  # Force refresh
+#         pbar.bar_format = f"{MAGENTA}{{l_bar}}{RESET}{color}{{bar:20}}{RESET}{BLUE}{{r_bar}}{RESET}"
+#         pbar.refresh()  # Manually refresh the bar
+
+#         pbar.update(0)  # Force update (no increment)
 
 
 # def get_colour(x):
